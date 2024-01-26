@@ -9,10 +9,9 @@ endif()
 project ("marketElectricity")
 
 # Add source to this project's executable.
-add_executable (marketElectricity main.c )
+add_executable (marketElectricity "main.c" "ui.h" "ui.c" "styles.h" "m_utils.h" "m_utils.c")
 
-# Add sub directories
-add_subdirectory("lib/cee_events")
+add_subdirectory(external)
 
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
@@ -21,5 +20,5 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 # Link stuff
-target_link_libraries(marketElectricity cee_events)
-
+#target_link_libraries(marketElectricity PRIVATE cee_events raylib)
+target_link_libraries(marketElectricity PRIVATE raylib)

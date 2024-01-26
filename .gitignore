@@ -1,11 +1,3 @@
-# Ignore libs
-lib/*
-!lib/readme.md
-
-# Ignore externar libs
-extern/*
-!extern/readme.md
-
 # Ignore editor specific stuff
 out/
 .vs
