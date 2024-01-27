@@ -9,13 +9,15 @@
 #include "raylib.h"
 #include "m_utils.h"
 #include "styles.h"
+#include "web.h"
 
 /************** Defines **********************/
-// #### Settings
+
+// #### Application settings
 #define APP_DEV true
 #define GENERATE_RANDOM_DATA true
 #define GENERATE_SAMPLE_DATA false
-#define ALLOW_API_REQUESTS false
+#define ALLOW_API_REQUESTS true
 
 // #### program constants
 #define VERSION "V: 0.1.0"
@@ -34,6 +36,9 @@ void initViewModel(ViewModel* viewModel, time_t* t, unsigned int nextUpdateStamp
 
 /* Get current hour in unix time */
 time_t calculateCurrentHour(void);
+
+/* Get next hour */
+time_t calculateNextHour(void);
 
 /* Populate Viewmodel hour list with hours*/
 void generateHours(ViewModel* viewModel, time_t* t);
@@ -57,6 +62,7 @@ int main(void) {
     // Init thingies
     initViewModel(&viewModel, &dateTime, nextViewModelUpdate);
     initGui(APPLICATION_NAME);
+    initWeb();
 
 
     while (!WindowShouldClose())
@@ -74,6 +80,7 @@ int main(void) {
     }
 
     // Clean up
+    cleanWeb();
     stopGui();
 
 	return 0;
@@ -90,10 +97,11 @@ void initViewModel(ViewModel* viewModel, time_t* t, unsigned int nextUpdateStamp
     viewModel->nextDataUpdateStamp = nextUpdateStamp;
 
 #if ALLOW_API_REQUESTS == false
-    viewModel->nextHour = (float)rand() / (float)(RAND_MAX / 3.5f);
     viewModel->currHour = (float)rand() / (float)(RAND_MAX / 3.5f);
+    viewModel->nextHour = (float)rand() / (float)(RAND_MAX / 3.5f);
 #else
-    // do web request
+    viewModel->currHour = fetchSingleHourPrice(calculateCurrentHour());
+    viewModel->currHour = fetchSingleHourPrice(calculateNextHour());
 #endif
     generateHours(viewModel, t);
 }
@@ -106,7 +114,7 @@ void updateViewModel(ViewModel* viewModel, time_t* t, unsigned int nextUpdateSta
 #if ALLOW_API_REQUESTS == false
         viewModel->nextHour = (float)rand() / (float)(RAND_MAX / 3.5f);
 #else
-    // do web request
+    viewModel->nextHour = fetchSingleHourPrice(calculateNextHour());
 #endif
     generateHours(viewModel, t);
 }
@@ -114,6 +122,13 @@ void updateViewModel(ViewModel* viewModel, time_t* t, unsigned int nextUpdateSta
 time_t calculateCurrentHour(void) {
     time_t t;
     time(&t);
+    return t - (t % 3600);
+}
+
+time_t calculateNextHour(void) {
+    time_t t;
+    time(&t);
+    t += 3600;
     return t - (t % 3600);
 }
 

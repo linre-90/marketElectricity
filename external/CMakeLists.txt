@@ -2,19 +2,93 @@
 # enable FetchContent
 include(FetchContent)
 
-##########Pull in event library ####################
-#FetchContent_Declare(
-#	cee_events
-#	GIT_REPOSITORY https://github.com/linre-90/cee_events.git
-#	GIT_TAG master
-#)
-#FetchContent_MakeAvailable(cee_events)
+########## Pull in raylib ####################
+# Customize raylib build according to _deps/raylibsrc/CMakeOptions.txt
+set(CUSTOMIZE_BUILD ON)
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
+set(SUPPORT_MODULE_RMODELS OFF)
+set(SUPPORT_MODULE_RAUDIO OFF)
 
-##########Pull in raylib ####################
+# rcore.c
+set(SUPPORT_CAMERA_SYSTEM OFF)
+set(SUPPORT_GESTURES_SYSTEM OFF)
+set(SUPPORT_RPRAND_GENERATOR OFF)
+set(SUPPORT_SSH_KEYBOARD_RPI OFF)
+set(SUPPORT_SCREEN_CAPTURE OFF)
+set(SUPPORT_GIF_RECORDING OFF)
+set(SUPPORT_COMPRESSION_API OFF)
+
+
+# rtextures.c
+set(SUPPORT_IMAGE_EXPORT OFF)
+set(SUPPORT_IMAGE_GENERATION OFF)
+set(SUPPORT_IMAGE_MANIPULATION OFF)
+set(SUPPORT_FILEFORMAT_PNG OFF)
+set(SUPPORT_FILEFORMAT_DDS OFF)
+set(SUPPORT_FILEFORMAT_HDR OFF)
+set(SUPPORT_FILEFORMAT_PIC OFF)
+set(SUPPORT_FILEFORMAT_PNM OFF)
+set(SUPPORT_FILEFORMAT_KTX OFF)
+set(SUPPORT_FILEFORMAT_ASTC OFF)
+set(SUPPORT_FILEFORMAT_BMP OFF)
+set(SUPPORT_FILEFORMAT_TGA OFF)
+set(SUPPORT_FILEFORMAT_JPG OFF)
+set(SUPPORT_FILEFORMAT_GIF OFF)
+set(SUPPORT_FILEFORMAT_QOI OFF)
+set(SUPPORT_FILEFORMAT_PSD OFF)
+set(SUPPORT_FILEFORMAT_PKM OFF)
+set(SUPPORT_FILEFORMAT_PVR OFF)
+set(SUPPORT_FILEFORMAT_SVG OFF)
+
+# rtext.c
+set(SUPPORT_FILEFORMAT_FNT OFF)
+set(SUPPORT_FILEFORMAT_TTF OFF)
+set(SUPPORT_TEXT_MANIPULATION ON)
+set(SUPPORT_FONT_ATLAS_WHITE_REC ON)
+
+# rmodels.c
+set(SUPPORT_MESH_GENERATION OFF)
+set(SUPPORT_FILEFORMAT_OBJ OFF)
+set(SUPPORT_FILEFORMAT_MTL OFF)
+set(SUPPORT_FILEFORMAT_IQM OFF)
+set(SUPPORT_FILEFORMAT_GLTF OFF)
+set(SUPPORT_FILEFORMAT_VOX OFF)
+set(SUPPORT_FILEFORMAT_M3D OFF)
+
+# raudio.c
+set(SUPPORT_FILEFORMAT_WAV OFF)
+set(SUPPORT_FILEFORMAT_OGG OFF)
+set(SUPPORT_FILEFORMAT_XM OFF)
+set(SUPPORT_FILEFORMAT_MOD OFF)
+set(SUPPORT_FILEFORMAT_MP3 OFF)
+set(SUPPORT_FILEFORMAT_QOA OFF)
+set(SUPPORT_FILEFORMAT_FLAC OFF)
+
+# utils.c
+set(SUPPORT_STANDARD_FILEIO OFF)
+set(SUPPORT_TRACELOG ON)
+
+
 FetchContent_Declare(
 	raylib
 	GIT_REPOSITORY https://github.com/raysan5/raylib.git
 	GIT_TAG 5.0
 )
+
 # make available
 FetchContent_MakeAvailable(raylib)
+
+
+########## Pull in curl ####################
+
+set(CMAKE_USE_WINSSL ON)
+set(CURL_USE_SCHANNEL  ON)
+FetchContent_Declare(
+	curl
+	GIT_REPOSITORY https://github.com/curl/curl.git
+	GIT_TAG curl-8_5_0
+)
+
+# make available
+FetchContent_MakeAvailable(curl)
