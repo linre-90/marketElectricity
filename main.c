@@ -10,42 +10,30 @@
 /************** Defines **********************/
 
 // #### Application settings
-#define APP_DEV false
-#define GENERATE_RANDOM_DATA true
-#define GENERATE_SAMPLE_DATA false
-#define ALLOW_API_REQUESTS true
+#define APP_DEV false                                   /* Speeds up time */
 
 // #### program constants
-#define VERSION "V: 0.1.0"
-#define APPLICATION_NAME  "Market electricity watcher"
-#define HOUR 3600       // one hour in unix seconds
-#define MINUTE 60       // one minute in unix seconds
-#define DEV_HOUR 10   // accelarated dev hour to speed up development unix time
+#define VERSION "V: 0.1.0"                              /* Program version */
+#define APPLICATION_NAME  "Market electricity watcher"  /* Program title */
+#define HOUR 3600                                       /* one hour in unix seconds */
+#define DEV_HOUR 10                                     /* accelarated dev hour to speed up development unix time */
 
 /************** Forwrd dec **********************/
 
-/* Initialize view model */
+/* Perform view model update. Updates data, curr hour index and next update time. */
 void updateViewModel(ViewModel* viewModel);
 
-/* Set viewmodel current hour index. */
+/* Set or update viewmodel current hour index. Hour indicates which data is relevant for current time. */
 void setCurrentHourIndex(ViewModel* viewModel);
 
-/* Sets viewmodel data fetch update to now + 12 hours */
+/* Set or update viewmodel data fetch update. New value will be: now + 12hours.*/
 void setViewModelUpdate(ViewModel* viewModel);
 
-/* Get current hour in unix time */
-time_t calculateCurrentHour(void);
 
-/* Get next hour */
-time_t calculateNextHour(void);
-
-
-/**************** Magic *************************/
+/**************** The program *************************/
 int main(void) {
-    ViewModel viewModel = { 0 };
-    time_t dateTime = time(NULL);
-   
     // Init thingies
+    ViewModel viewModel = { 0 };
     viewModel.priceArr = (struct Price*)malloc(sizeof(struct Price) * NUM_OF_API_RESULTS);
     updateViewModel(&viewModel);
     initGui(APPLICATION_NAME);
@@ -53,17 +41,18 @@ int main(void) {
     // Program loop
     while (!WindowShouldClose())
     {
+        // Data fetch update check
         if (viewModel.nextDataUpdateStamp - time(NULL) <= 0) {
             drawGui(&viewModel, VERSION, true);
             updateViewModel(&viewModel);
         }
-
+        // Update active hour and ui
         setCurrentHourIndex(&viewModel);
         drawGui(&viewModel, VERSION, false);
     }
 
-    free(viewModel.priceArr);
     // Clean up
+    free(viewModel.priceArr);
     stopGui();
 
 	return 0;
@@ -76,14 +65,14 @@ void updateViewModel(ViewModel* viewModel) {
 }
 
 void setCurrentHourIndex(ViewModel* viewModel) {
-    time_t t = calculateCurrentHour();
-    int currentUtcHour = gmtime(&t)->tm_hour;
-
+    // Loop over data until current unix time collapsed to hour is found.
     for (int i = 0; i < NUM_OF_API_RESULTS; i++)
     {
-        if (viewModel->priceArr[i].utcTime - calculateCurrentHour(time(NULL)) == 0)
+        // viewmodel price seconds are always 0 so this works.
+        if (viewModel->priceArr[i].utcTime - calculateCurrentHour() == 0)
         {
             viewModel->currHourIndex = i;
+            // Next hour data is n - 1
             if (i == 0) {
                 viewModel->NextHourIndex = -1;
             }
@@ -105,10 +94,4 @@ void setViewModelUpdate(ViewModel* viewModel) {
     viewModel->nextDataUpdateStamp = t + HOUR * 12;
 }
 
-time_t calculateNextHour(void) {
-    time_t t;
-    time(&t);
-    t += 3600;
-    return t - (t % 3600);
-}
 
