@@ -60,6 +60,8 @@ int readCache(ViewModel* out_viewModel) {
 		fclose(file);
 		return -1;
 	}
+	out_viewModel->nextDataUpdateStamp = nextUpdateStamp;
+
 	printf("arr addr: %p\n", &out_viewModel->priceArr);
 	// Read price arr to view model
 	size_t readPricesBytes = fread(&out_viewModel->priceArr[0], sizeof(out_viewModel->priceArr[0]) * NUM_OF_API_RESULTS, 1, file);

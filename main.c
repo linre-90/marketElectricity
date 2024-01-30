@@ -61,6 +61,7 @@ int main(void) {
     {
         // Data fetch update check
         if (viewModel.nextDataUpdateStamp - time(NULL) <= 0) {
+            printf("asdasdasd");
             drawGui(&viewModel, VERSION, true);
             updateViewModel(&viewModel);
         }
