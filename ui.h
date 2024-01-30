@@ -1,15 +1,21 @@
 #ifndef UI_HEADER
 #define UI_HEADER
 #include <time.h>
+#include "web.h"
 #include "raylib.h"
 
 /* View model used in app */
 typedef struct {
-    float currHour;
-    float nextHour;
-    float history[24];
-    int hourList[24];
+    struct Price* priceArr;
+    int currHourIndex;
+    int NextHourIndex;
     unsigned long nextDataUpdateStamp;
+
+
+    //float currHour;
+    //float nextHour;
+    //float history[24];
+    //int hourList[24];
 } ViewModel;
 
 /* Initialize gui library */
@@ -19,16 +25,16 @@ void initGui(const char* applicationName);
 void stopGui(void);
 
 /* Draw full gui. */
-void drawGui(ViewModel* viewModel, time_t* dateTime, const char* version, bool isLoading);
+void drawGui(ViewModel* viewModel, const char* version, bool isLoading);
 
 /* Draws time related gui box */
-void drawGuiTime(time_t* t);
+void drawGuiTime();
 
 /* Draws prices related gui box. */
 void drawGuiPrices(ViewModel* viewModel);
 
 /* Draws gui history graph box. */
-void drawGuiHistory(ViewModel* viewModel, time_t* t);
+void drawGuiDatePrices(ViewModel* viewModel);
 
 /* Draws gui version stamp box. */
 void drawGuiVersion(const char* version);

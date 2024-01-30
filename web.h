@@ -1,12 +1,23 @@
 #ifndef WEB_H
 #define WEB_H
 
-/* Initialize web request*/
-void initWeb(void);
+#include <time.h>
 
-void cleanWeb(void);
+/* How many results api returs on fetchData() */
+static const int NUM_OF_API_RESULTS = 48;
 
-/* Get price for single hour. Returns price in euros. */
-float fetchSingleHourPrice(unsigned long hourUnixTime);
+/* Presents data parsed by web module json converter */
+struct Price {
+	float price;
+	time_t utcTime;
+
+	int utcHour;
+	int MM;
+	int YYYY;
+	int DD;
+};
+
+/* Fetch 48 hour price listing from API.*/
+void fetchData(struct Price* priceArr);
 
 #endif // !WEB_H
