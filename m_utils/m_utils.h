@@ -3,10 +3,10 @@
 
 #include <time.h>
 
-/* Clamp float value between min and max */
+/* Clamp float value [num] between [min] and [max] */
 float clamp(float num, float min, float max);
 
-/* Calculate current unix hour. */
+/* Calculates current unix hour with 0 zero seconds. */
 time_t calculateCurrentHour(void);
 
 #endif
