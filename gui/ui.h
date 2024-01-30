@@ -1,9 +1,9 @@
 #ifndef UI_HEADER
 #define UI_HEADER
-#include <time.h>
-#include "../web.h"
-#include "raylib.h"
 
+/* Forward dec */
+
+struct Price;
 
 /* View model used in app */
 typedef struct {
@@ -11,12 +11,6 @@ typedef struct {
     int currHourIndex;
     int NextHourIndex;
     unsigned long nextDataUpdateStamp;
-
-
-    //float currHour;
-    //float nextHour;
-    //float history[24];
-    //int hourList[24];
 } ViewModel;
 
 /* Initialize gui library */

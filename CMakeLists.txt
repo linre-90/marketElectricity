@@ -9,18 +9,19 @@ endif()
 project ("marketElectricity")
 
 # Add source to this project's executable.
-add_executable (marketElectricity "main.c" "web.h" "web.c")
+add_executable (marketElectricity "main.c")
 
 # external directory contains fetchcontent dependencies
 add_subdirectory(external)
 add_subdirectory(m_utils)
 add_subdirectory(gui)
+add_subdirectory(web)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET marketElectricity PROPERTY CXX_STANDARD 20)
   set_property(TARGET marketElectricity PROPERTY C_STANDARD 17)
 endif()
 
-
+#raylib CURL::libcurl
 # Link stuff
-target_link_libraries(marketElectricity PRIVATE m_utils gui raylib CURL::libcurl)
+target_link_libraries(marketElectricity PRIVATE m_utils gui web )
