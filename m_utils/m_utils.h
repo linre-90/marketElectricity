@@ -1,5 +1,6 @@
 #ifndef M_UTILS_H
 #define M_UTILS_H
+
 #include <time.h>
 
 /* Clamp float value between min and max */
