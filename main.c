@@ -13,6 +13,7 @@
 
 // #### Application settings
 #define APP_DEV false                                   /* Speeds up time */
+#define APP_ENABLE_CACHE true                           /* Enable or disable cache */
 
 // #### program constants
 #define VERSION "V: 0.1.0"                              /* Program version */
@@ -42,6 +43,7 @@ int main(void) {
         exit(1);
     }
 
+#if APP_ENABLE_CACHE == true
     int validCache = readCache(&viewModel);
     if (validCache == 0) {
         printf("\nStart with cached values!\n\n");
@@ -52,6 +54,11 @@ int main(void) {
         printf("\nStart with full reset values!\n\n");
         updateViewModel(&viewModel);
     }
+#endif
+#if APP_ENABLE_CACHE == false
+    printf("\nStart with full reset values! Cache is disabled.\n\n");
+    updateViewModel(&viewModel);
+#endif
 
     // init gui
     initGui(APPLICATION_NAME);
@@ -81,7 +88,9 @@ void updateViewModel(ViewModel* viewModel) {
     fetchData(viewModel->priceArr);
     setViewModelHourIndexes(viewModel);
     setViewModelUpdate(viewModel);
+#if APP_ENABLE_CACHE == true
     writeCache(viewModel);
+#endif
 }
 
 void setViewModelHourIndexes(ViewModel* viewModel) {

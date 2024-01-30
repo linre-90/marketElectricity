@@ -19,6 +19,9 @@ add_subdirectory(web)
 add_subdirectory(m_cache)
 add_subdirectory(viewmodel)
 
+# Copu stuff from src to bin folder this could be better...
+file(COPY gui/resources DESTINATION ${CMAKE_BINARY_DIR})
+
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET marketElectricity PROPERTY CXX_STANDARD 20)
   set_property(TARGET marketElectricity PROPERTY C_STANDARD 17)

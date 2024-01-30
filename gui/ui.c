@@ -6,6 +6,12 @@
 #include "web.h"
 #include "viewModel.h"
 
+/* ############### globals ############### */
+
+/* Application font */
+Font normalFont;
+Font smallFont;
+
 /* ############### forward dec ############### */
 
 /* Applies default padding to coordinates in direction indicated by direction.*/
@@ -15,10 +21,15 @@ int applyPadding(int coordinate, int direction);
 
 void initGui(const char* applicationName) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, applicationName);
+    normalFont = LoadFontEx("resources/normal_font.ttf", 20, 0, 250);
+    smallFont = LoadFontEx("resources/normal_font.ttf", 14, 0, 250);
+    SetTextLineSpacing(48);
     SetTargetFPS(2);
 }
 
 void stopGui(void) {
+    UnloadFont(smallFont);
+    UnloadFont(normalFont);
     CloseWindow();
 }
 
@@ -50,8 +61,8 @@ void drawGuiTime() {
     int xCoordinateA = applyPadding(0, 1);
     int yCoordinateB = timeBoxY + FONT_MD;
     // Draw the stuff
-    DrawText(TextFormat("Utc:     %s", asctime(gmtime(&t))), xCoordinateA, timeBoxY, FONT_MD, BLACK);
-    DrawText(TextFormat("Local:   %s", asctime(localtime(&t))), xCoordinateA, yCoordinateB, FONT_MD, BLACK);
+    DrawTextEx(normalFont, TextFormat("Utc:      %s", asctime(gmtime(&t))), (Vector2) { xCoordinateA, timeBoxY }, FONT_MD, 2,BLACK);
+    DrawTextEx(normalFont, TextFormat("Local:   %s", asctime(localtime(&t))), (Vector2) { xCoordinateA, yCoordinateB}, FONT_MD, 2, BLACK);
 }
 
 void drawGuiPrices(ViewModel* viewModel) {
@@ -65,18 +76,18 @@ void drawGuiPrices(ViewModel* viewModel) {
     int yCoordinateB = applyPadding(yCoordinateA + FONT_MD, 0);
 
     // Draw current price
-    DrawText("Current hour price:", xCoordinateA, yCoordinateA, FONT_MD, GREEN);
-    DrawText(TextFormat("%.2f cents/KWh", viewModel->priceArr[viewModel->currHourIndex].price), xCoordinateB, yCoordinateA, FONT_MD, GREEN);
+    DrawTextEx(normalFont, "Current hour price:", (Vector2) { xCoordinateA, yCoordinateA}, FONT_MD, 2, BLACK);
+    DrawTextEx(normalFont, TextFormat("%.2f cents/KWh", viewModel->priceArr[viewModel->currHourIndex].price), (Vector2) { xCoordinateB, yCoordinateA}, FONT_MD, 2, BLACK);
     // Draw update time
     time_t lastUpdate = viewModel->nextDataUpdateStamp;
-    DrawText(TextFormat("Next refresh: %02d:%02d", localtime(&lastUpdate)->tm_hour, localtime(&lastUpdate)->tm_min), xCoordinateB + 200, yCoordinateA + FONT_SM / 2, FONT_SM, Fade(BLACK, .5f));
+    DrawTextEx(smallFont, TextFormat("Next refresh: %02d:%02d", localtime(&lastUpdate)->tm_hour, localtime(&lastUpdate)->tm_min), (Vector2) { xCoordinateB + 200, yCoordinateA }, FONT_SM, 2, Fade(BLACK, .5f));
     // Draw next hour price
-    DrawText("Next hour price:   ", xCoordinateA, yCoordinateB, FONT_MD, DARKGREEN);
+    DrawTextEx(normalFont, "Next hour price:   ", (Vector2) { xCoordinateA, yCoordinateB }, FONT_MD, 2, BLACK);
     if (viewModel->NextHourIndex  != -1) {
-        DrawText(TextFormat("%.2f cents/KWh", viewModel->priceArr[viewModel->NextHourIndex].price), xCoordinateB, yCoordinateB, FONT_MD, DARKGREEN);
+        DrawTextEx(normalFont, TextFormat("%.2f cents/KWh", viewModel->priceArr[viewModel->NextHourIndex].price), (Vector2) { xCoordinateB, yCoordinateB }, FONT_MD, 2, BLACK);
     }
     else {
-        DrawText("Error fetching next price index out of bounds.", xCoordinateB, yCoordinateB, FONT_MD, DARKGREEN);
+        DrawTextEx(normalFont, "Error fetching next price index out of bounds.", (Vector2) { xCoordinateB, yCoordinateB }, FONT_MD, 2, RED);
     }
 }
 
@@ -94,7 +105,7 @@ void drawGuiDatePrices(ViewModel* viewModel) {
     int hourListXOffset = plottingRec.width / 24;
 
     // Draw header
-    DrawText(TextFormat("%2d.%2d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), applyPadding(0, 1), plottingRec.y - (FONT_MD + FONT_LG) - 20, FONT_LG, BLACK);
+    DrawTextEx(normalFont, TextFormat("%2d.%2d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD * 2 }, FONT_MD, 2, BLACK);
     // Draw bgr rectangle
     DrawRectangleRec(plottingRec, Fade(GREEN, 0.5f));
 
@@ -119,7 +130,7 @@ void drawGuiDatePrices(ViewModel* viewModel) {
             clampedPrice = clamp(viewModel->priceArr[dataIter].price, 0, plottingRec.height);
             
             // Draw hour marker
-            DrawText(TextFormat("%02d", localtime(&viewModel->priceArr[dataIter].utcTime)->tm_hour), hourListXOffset * plottingIter + PADDING, plottingOrigo, FONT_SM, BLACK);
+            DrawTextEx(smallFont, TextFormat("%02d", localtime(&viewModel->priceArr[dataIter].utcTime)->tm_hour), (Vector2) { hourListXOffset* plottingIter + PADDING, plottingOrigo }, FONT_SM, .75f, BLACK);
             // Draw bar
             Rectangle barRec = {
                 .x = hourListXOffset * plottingIter + PADDING,
@@ -129,7 +140,7 @@ void drawGuiDatePrices(ViewModel* viewModel) {
             };
             DrawRectangleRec(barRec, BLUE);
             // Draw price
-            DrawText(TextFormat("%.2f", viewModel->priceArr[dataIter].price), barRec.x, barRec.y - FONT_SM, FONT_SM, BLACK);
+            DrawTextEx(smallFont, TextFormat("%.2f", viewModel->priceArr[dataIter].price), (Vector2) { barRec.x, barRec.y - FONT_SM }, FONT_SM, .75f, BLACK);
             // average calculation
             average_sum += viewModel->priceArr[dataIter].price;
             average_count++;
@@ -139,18 +150,18 @@ void drawGuiDatePrices(ViewModel* viewModel) {
     }
 
     // Draw average day price
-    DrawText(TextFormat("Graph average: %.2f cents/KWh", average_sum / average_count), applyPadding(0, 1), plottingRec.y - FONT_MD - 20, FONT_MD, BLACK);
+    DrawTextEx(smallFont, TextFormat("Graph average: %.2f cents/KWh", average_sum / average_count), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD }, FONT_SM, 2, BLACK);
 }
 
 
 void drawLoadingGui(void) {
-    DrawText("... Loading ...", SCREEN_WIDTH / 2 - 130 , SCREEN_HEIGHT / 2 - FONT_LG, FONT_LG *2, BLACK);
+    DrawTextEx(normalFont, "... Loading ...", (Vector2) { SCREEN_WIDTH / 2 - 75 , SCREEN_HEIGHT / 2 - FONT_MD}, FONT_MD, 2, BLACK);
 }
 
 void drawGuiVersion(const char* version) {
-    int xPosition = applyPadding(SCREEN_WIDTH - 50, -1);
+    int xPosition = applyPadding(SCREEN_WIDTH - 100, -1);
     int yPosition = applyPadding(SCREEN_HEIGHT - FONT_SM, -1);
-    DrawText(version, xPosition, yPosition, FONT_SM, GRAY);
+    DrawTextEx(normalFont, version, (Vector2) { xPosition, yPosition }, FONT_MD, 2, GRAY);
 }
 
 int applyPadding(int coordinate, int direction) {
