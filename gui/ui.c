@@ -1,13 +1,14 @@
 #include <stdbool.h>
+#include "raylib.h"
 #include "ui.h"
 #include "styles.h"
 #include "m_utils.h"
 #include "web.h"
-#include "raylib.h"
 
 /* ############### forward dec ############### */
+
+/* Applies default padding to coordinates in direction indicated by direction.*/
 int applyPadding(int coordinate, int direction);
-//void drawHours(int offsetX, int posY, ViewModel* viewModel);
 
 /* ############# Implementations ############# */
 
@@ -43,17 +44,17 @@ void drawGuiBackground(void) {
 
 void drawGuiTime() {
     time_t t = time(NULL);
+    // Setup coordinates
     int timeBoxY = applyPadding(0, 1);
     int xCoordinateA = applyPadding(0, 1);
     int yCoordinateB = timeBoxY + FONT_MD;
-    t = time(NULL);
-
+    // Draw the stuff
     DrawText(TextFormat("Utc:     %s", asctime(gmtime(&t))), xCoordinateA, timeBoxY, FONT_MD, BLACK);
     DrawText(TextFormat("Local:   %s", asctime(localtime(&t))), xCoordinateA, yCoordinateB, FONT_MD, BLACK);
 }
 
 void drawGuiPrices(ViewModel* viewModel) {
-    // This is where "price box" begins
+    // This is where "price box" begins from window top
     int pricesTopPx = 50;
     
     // Calculate draw locations
@@ -75,9 +76,7 @@ void drawGuiPrices(ViewModel* viewModel) {
     }
     else {
         DrawText("Error fetching next price index out of bounds.", xCoordinateB, yCoordinateB, FONT_MD, DARKGREEN);
-
     }
-
 }
 
 void drawGuiDatePrices(ViewModel* viewModel) {
@@ -113,9 +112,9 @@ void drawGuiDatePrices(ViewModel* viewModel) {
         int cMM = gmtime(&t)->tm_mon;
         int cYYYY = gmtime(&t)->tm_year;
 
-        // Find this days prices
+        // Find current day prices
         if (DD == cDD && MM == cMM && YYYY == cYYYY) {
-            // Plot data circles
+            // Clamp price so data fits to area, range is 0 - 300 cents
             clampedPrice = clamp(viewModel->priceArr[dataIter].price, 0, plottingRec.height);
             
             // Draw hour marker
@@ -130,6 +129,7 @@ void drawGuiDatePrices(ViewModel* viewModel) {
             DrawRectangleRec(barRec, BLUE);
             // Draw price
             DrawText(TextFormat("%.2f", viewModel->priceArr[dataIter].price), barRec.x, barRec.y - FONT_SM, FONT_SM, BLACK);
+            // average calculation
             average_sum += viewModel->priceArr[dataIter].price;
             average_count++;
             plottingIter++;

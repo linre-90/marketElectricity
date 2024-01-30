@@ -1,20 +1,20 @@
-/*Define style constants for ui.*/
+/*Defines style constants for ui.*/
 
 #ifndef UI_STYLES_H
 #define UI_STYLES_H
 
 
 /* Screen */
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 800	/* Screen width in pixels */
+#define SCREEN_HEIGHT 600	/* Screen hight in pixels */
 
 /* Padding */
-#define PADDING 10
+#define PADDING 10			/* Default padding in pixels */
 
 /* Font */
-#define FONT_SM 10
-#define FONT_MD 20
-#define FONT_LG 24
+#define FONT_SM 10			/* Small font size */
+#define FONT_MD 20			/* Medium font size */
+#define FONT_LG 24			/* Large font size */
 
 
 #endif // !UI_STYLES_H

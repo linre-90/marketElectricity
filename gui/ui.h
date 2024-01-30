@@ -5,7 +5,7 @@
 
 struct Price;
 
-/* View model used in app */
+/* View model contains all the relevant data that ui needs to function properly. */
 typedef struct {
     struct Price* priceArr;
     int currHourIndex;
@@ -25,10 +25,10 @@ void drawGui(ViewModel* viewModel, const char* version, bool isLoading);
 /* Draws time related gui box */
 void drawGuiTime();
 
-/* Draws prices related gui box. */
+/* Draws current and next hour price related gui box. */
 void drawGuiPrices(ViewModel* viewModel);
 
-/* Draws gui history graph box. */
+/* Draws gui todays price graph box. */
 void drawGuiDatePrices(ViewModel* viewModel);
 
 /* Draws gui version stamp box. */
