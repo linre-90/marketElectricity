@@ -16,6 +16,8 @@ add_subdirectory(external)
 add_subdirectory(m_utils)
 add_subdirectory(gui)
 add_subdirectory(web)
+add_subdirectory(m_cache)
+add_subdirectory(viewmodel)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET marketElectricity PROPERTY CXX_STANDARD 20)
@@ -24,4 +26,4 @@ endif()
 
 #raylib CURL::libcurl
 # Link stuff
-target_link_libraries(marketElectricity PRIVATE m_utils gui web )
+target_link_libraries(marketElectricity PRIVATE viewmodel m_utils gui web m_cache)

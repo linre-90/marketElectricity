@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "m_utils.h";
 #include "web.h"
+#include "viewModel.h";
 
 /************** Defines **********************/
 

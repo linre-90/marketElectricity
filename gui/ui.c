@@ -4,6 +4,7 @@
 #include "styles.h"
 #include "m_utils.h"
 #include "web.h"
+#include "viewModel.h"
 
 /* ############### forward dec ############### */
 
