@@ -3,12 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-
-//#include "cee_event.h"
 #include "ui.h"
-#include "raylib.h"
-#include "m_utils/m_utils.h"
-#include "styles.h"
+#include "m_utils.h";
 #include "web.h"
 
 /************** Defines **********************/

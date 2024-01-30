@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "web.h"
 #include <curl/curl.h>
+#include "web.h"
 
 /* Memory for json response. */
 struct MemoryStruct {
