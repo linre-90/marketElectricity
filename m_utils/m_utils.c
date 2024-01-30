@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "m_utils.h"
-#include "ui.h"
 
 
 float clamp(float num, float min, float max) {

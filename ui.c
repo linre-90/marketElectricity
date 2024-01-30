@@ -1,9 +1,8 @@
 #include <stdbool.h>
 #include "ui.h"
 #include "styles.h"
-#include "m_utils.h"
+#include "m_utils/m_utils.h"
 #include "web.h"
-#include "m_utils.h";
 
 /* ############### forward dec ############### */
 int applyPadding(int coordinate, int direction);

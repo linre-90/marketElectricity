@@ -4,6 +4,7 @@
 #include "web.h"
 #include "raylib.h"
 
+
 /* View model used in app */
 typedef struct {
     struct Price* priceArr;
