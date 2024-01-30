@@ -139,7 +139,7 @@ void drawGuiDatePrices(ViewModel* viewModel) {
     }
 
     // Draw average day price
-    DrawText(TextFormat("Day average: %.2f cents/KWh", average_sum / average_count), applyPadding(0, 1), plottingRec.y - FONT_MD - 20, FONT_MD, BLACK);
+    DrawText(TextFormat("Graph average: %.2f cents/KWh", average_sum / average_count), applyPadding(0, 1), plottingRec.y - FONT_MD - 20, FONT_MD, BLACK);
 }
 
 

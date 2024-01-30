@@ -7,6 +7,7 @@
 #include "m_utils.h";
 #include "web.h"
 #include "viewModel.h";
+#include "m_cache.h"
 
 /************** Defines **********************/
 
@@ -25,7 +26,7 @@
 void updateViewModel(ViewModel* viewModel);
 
 /* Set or update viewmodel current hour index. Hour indicates which data is relevant for current time. */
-void setCurrentHourIndex(ViewModel* viewModel);
+void setViewModelHourIndexes(ViewModel* viewModel);
 
 /* Set or update viewmodel data fetch update. New value will be: now + 12hours.*/
 void setViewModelUpdate(ViewModel* viewModel);
@@ -33,10 +34,26 @@ void setViewModelUpdate(ViewModel* viewModel);
 
 /**************** The program *************************/
 int main(void) {
-    // Init thingies
+    // Init view model
     ViewModel viewModel = { 0 };
     viewModel.priceArr = (struct Price*)malloc(sizeof(struct Price) * NUM_OF_API_RESULTS);
-    updateViewModel(&viewModel);
+    if (viewModel.priceArr == NULL) {
+        printf("\nError reserving memory in start.!\n");
+        exit(1);
+    }
+
+    int validCache = readCache(&viewModel);
+    if (validCache == 0) {
+        printf("\nStart with cached values!\n\n");
+        setViewModelHourIndexes(&viewModel);
+    }
+    else {
+        // Start program with full viewmodel and data reset.
+        printf("\nStart with full reset values!\n\n");
+        updateViewModel(&viewModel);
+    }
+
+    // init gui
     initGui(APPLICATION_NAME);
 
     // Program loop
@@ -48,7 +65,7 @@ int main(void) {
             updateViewModel(&viewModel);
         }
         // Update active hour and ui
-        setCurrentHourIndex(&viewModel);
+        setViewModelHourIndexes(&viewModel);
         drawGui(&viewModel, VERSION, false);
     }
 
@@ -61,11 +78,12 @@ int main(void) {
 
 void updateViewModel(ViewModel* viewModel) {
     fetchData(viewModel->priceArr);
-    setCurrentHourIndex(viewModel);
+    setViewModelHourIndexes(viewModel);
     setViewModelUpdate(viewModel);
+    writeCache(viewModel);
 }
 
-void setCurrentHourIndex(ViewModel* viewModel) {
+void setViewModelHourIndexes(ViewModel* viewModel) {
     // Loop over data until current unix time collapsed to hour is found.
     for (int i = 0; i < NUM_OF_API_RESULTS; i++)
     {
