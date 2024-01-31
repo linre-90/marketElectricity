@@ -32,13 +32,13 @@
 /************** Forwrd dec **********************/
 
 /* Perform view model update. Updates data, curr hour index and next update time. */
-void updateViewModel(ViewModel* viewModel);
+void updateViewModel(ViewModel* const viewModel);
 
 /* Set or update viewmodel current hour index. Hour indicates which data is relevant for current time. */
-void setViewModelHourIndexes(ViewModel* viewModel);
+void setViewModelHourIndexes(ViewModel* const viewModel);
 
 /* Set or update viewmodel data fetch update. New value will be: now + 12hours.*/
-void setViewModelUpdate(ViewModel* viewModel);
+void setViewModelUpdate(ViewModel* const viewModel);
 
 
 /**************** The program *************************/
@@ -93,7 +93,7 @@ int main(void) {
 	return 0;
 }
 
-void updateViewModel(ViewModel* viewModel) {
+void updateViewModel(ViewModel* const viewModel) {
     fetchData(viewModel->priceArr);
     setViewModelHourIndexes(viewModel);
     setViewModelUpdate(viewModel);
@@ -102,7 +102,7 @@ void updateViewModel(ViewModel* viewModel) {
 #endif
 }
 
-void setViewModelHourIndexes(ViewModel* viewModel) {
+void setViewModelHourIndexes(ViewModel* const viewModel) {
     // Loop over data until current unix time collapsed to hour is found.
     for (int i = 0; i < NUM_OF_API_RESULTS; i++)
     {
@@ -123,7 +123,7 @@ void setViewModelHourIndexes(ViewModel* viewModel) {
     printf("\nError finding curent index from ViewModel data. Current hour does not exists.\n");
 }
 
-void setViewModelUpdate(ViewModel* viewModel) {
+void setViewModelUpdate(ViewModel* const viewModel) {
     time_t t = time(NULL);
 #if APP_DEV
     viewModel->nextDataUpdateStamp = t + DEV_HOUR;
