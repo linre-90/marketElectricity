@@ -10,4 +10,7 @@ ECHO:
 ECHO Copying .exe build...
 xcopy ".\out\build\x64-release\marketElectricity.exe" ".\release\windows\"
 ECHO:
+ECHO Deleting cache...
+DEL ".\release\windows\cache.mecache"
+ECHO:
 ECHO Succesfully copied all needed assets to ".\release\windows".
