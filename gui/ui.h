@@ -1,18 +1,11 @@
 #ifndef UI_HEADER
 #define UI_HEADER
 #include "viewModel.h"
+#include <stdbool.h>
 
 /* Forward dec */
 
 struct Price;
-
-/* View model contains all the relevant data that ui needs to function properly. */
-//typedef struct {
-//    struct Price* priceArr;
-//    int currHourIndex;
-//    int NextHourIndex;
-//    unsigned long nextDataUpdateStamp;
-//} ViewModel;
 
 
 /* Initialize gui library */
@@ -20,6 +13,8 @@ void initGui(const char* applicationName);
 
 /* Clean Gui library */
 void stopGui(void);
+
+bool detectWindowShouldClose();
 
 /* Draw full gui. */
 void drawGui(ViewModel* viewModel, const char* version, bool isLoading);

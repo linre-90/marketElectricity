@@ -4,22 +4,30 @@
 #include <stdbool.h>
 #include <time.h>
 #include "ui.h"
-#include "m_utils.h";
+#include "m_utils.h"
 #include "web.h"
-#include "viewModel.h";
+#include "viewModel.h"
 #include "m_cache.h"
+
 
 /************** Defines **********************/
 
-// #### Application settings
+// #### Application run/compile settings
 #define APP_DEV false                                   /* Speeds up time */
 #define APP_ENABLE_CACHE true                           /* Enable or disable cache */
+#define DISABLE_WIN_CONSOLE true                        /* Disable console on windows */
 
 // #### program constants
-#define VERSION "V: 0.1.0"                              /* Program version */
 #define APPLICATION_NAME  "Market electricity watcher"  /* Program title */
+#define VERSION "V: 0.5.0"                              /* Program version */
 #define HOUR 3600                                       /* one hour in unix seconds */
 #define DEV_HOUR 10                                     /* accelarated dev hour to speed up development unix time */
+
+// Disable console window underneath gui
+#if DISABLE_WIN_CONSOLE == true
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 
 /************** Forwrd dec **********************/
 
@@ -34,6 +42,7 @@ void setViewModelUpdate(ViewModel* viewModel);
 
 
 /**************** The program *************************/
+
 int main(void) {
     // Init view model
     ViewModel viewModel = { 0 };
@@ -64,11 +73,10 @@ int main(void) {
     initGui(APPLICATION_NAME);
 
     // Program loop
-    while (!WindowShouldClose())
+    while (!detectWindowShouldClose())
     {
         // Data fetch update check
         if (viewModel.nextDataUpdateStamp - time(NULL) <= 0) {
-            printf("asdasdasd");
             drawGui(&viewModel, VERSION, true);
             updateViewModel(&viewModel);
         }

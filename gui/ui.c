@@ -33,6 +33,10 @@ void stopGui(void) {
     CloseWindow();
 }
 
+bool detectWindowShouldClose() {
+    return WindowShouldClose();
+}
+
 void drawGui(ViewModel* viewModel, const char* version, bool isLoading) {
     BeginDrawing();
     drawGuiBackground();
