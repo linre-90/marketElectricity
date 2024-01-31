@@ -22,11 +22,17 @@ int writeCache(ViewModel* viewModel) {
 		return -1;
 	}
 	// Write magic number to file
-	fwrite(&MAGIC_NUMBER, sizeof(uint32_t), 1, file);
+	size_t magicNumSize = fwrite(&MAGIC_NUMBER, sizeof(uint32_t), 1, file);
 	// Next update to file
-	fwrite(&viewModel->nextDataUpdateStamp, sizeof(time_t), 1, file);
+	size_t nextUpdateSize = fwrite(&viewModel->nextDataUpdateStamp, sizeof(time_t), 1, file);
 	// Write price arr to file
-	fwrite(&viewModel->priceArr[0], sizeof(viewModel->priceArr[0]) * NUM_OF_API_RESULTS, 1, file);
+	size_t priceArrSize = fwrite(&viewModel->priceArr[0], sizeof(viewModel->priceArr[0]) * NUM_OF_API_RESULTS, 1, file);
+
+	if (magicNumSize != 1 || nextUpdateSize != 1 || priceArrSize != 1) {
+		fclose(file);
+		printf("\nError writing data: writeCache()\n");
+		return 0;
+	}
 
 #if DEBUG_PRINTS == 1
 	printf("Write done\n");

@@ -1,5 +1,3 @@
-#define CURL_STATICLIB
-
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +16,7 @@ struct MemoryStruct {
 static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
 /* Converts json string to struct Price array. */
-float parseJsonResponse(const char* res, struct Price* priceArr);
+void parseJsonResponse(const char* res, struct Price* priceArr);
 
 
 void fetchData(struct Price* priceArr) {
@@ -63,11 +61,10 @@ void fetchData(struct Price* priceArr) {
 }
 
 
-float parseJsonResponse(const char* res, struct Price* priceArr) {
+void parseJsonResponse(const char* res, struct Price* priceArr) {
 	// Skip the opening { and jump right in [ character
 	int iterator = 10;
 	int priceObjIterator = 0;
-	char searchPropertyPrice[] = "price";
 
 	// Loop over the whole res after skipping
 	while (res[iterator] != 0) {
@@ -97,7 +94,7 @@ float parseJsonResponse(const char* res, struct Price* priceArr) {
 			}
 
 			// Set price to struct convert cents to eur
-			priceArr[priceObjIterator].price = atof(priceStr);
+			priceArr[priceObjIterator].price = (float)atof(priceStr);
 
 			// Move forward to 's' ([s]tartDate) character and parse date
 			while (res[iterator] != 's' && res[iterator] != 0) { iterator++; }
@@ -132,7 +129,7 @@ float parseJsonResponse(const char* res, struct Price* priceArr) {
 				.tm_year = atoi(utcYYYYStr) - 1900,
 				.tm_mon = atoi(utcMMStr) - 1 < 0 ? 0 : atoi(utcMMStr) - 1,
 				.tm_mday = atoi(utcDDStr),
-				.tm_hour = atoi(utcHH) + 2,// Push forward two hours so gmtime function returns correct utc time
+				.tm_hour = atoi(utcHH) + 2,// Push forward two hours so gmtime function returns correct utc time.
 				.tm_min = 0,
 				.tm_sec = 0,
 				.tm_isdst = -1,
@@ -141,6 +138,7 @@ float parseJsonResponse(const char* res, struct Price* priceArr) {
 			// Make time and add it to price
 			time_t utc = mktime(&m_time);
 			priceArr[priceObjIterator].utcTime = utc;
+			
 
 			// Object parsing is finished not interested in the rest of the object properties
 			priceObjIterator++;

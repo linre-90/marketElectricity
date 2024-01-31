@@ -15,7 +15,7 @@ Font smallFont;
 /* ############### forward dec ############### */
 
 /* Applies default padding to coordinates in direction indicated by direction.*/
-int applyPadding(int coordinate, int direction);
+float applyPadding(int coordinate, int direction);
 
 /* ############# Implementations ############# */
 
@@ -61,9 +61,9 @@ void drawGuiBackground(void) {
 void drawGuiTime() {
     time_t t = time(NULL);
     // Setup coordinates
-    int timeBoxY = applyPadding(0, 1);
-    int xCoordinateA = applyPadding(0, 1);
-    int yCoordinateB = timeBoxY + FONT_MD;
+    float timeBoxY = applyPadding(0, 1);
+    float xCoordinateA = applyPadding(0, 1);
+    float yCoordinateB = timeBoxY + FONT_MD;
     // Draw the stuff
     DrawTextEx(normalFont, TextFormat("Utc:      %s", asctime(gmtime(&t))), (Vector2) { xCoordinateA, timeBoxY }, FONT_MD, 2,BLACK);
     DrawTextEx(normalFont, TextFormat("Local:   %s", asctime(localtime(&t))), (Vector2) { xCoordinateA, yCoordinateB}, FONT_MD, 2, BLACK);
@@ -74,10 +74,10 @@ void drawGuiPrices(ViewModel* viewModel) {
     int pricesTopPx = 50;
     
     // Calculate draw locations
-    int xCoordinateA = applyPadding(0, 1);
-    int xCoordinateB = applyPadding(230, 1);
-    int yCoordinateA = applyPadding(pricesTopPx + FONT_LG, 0);
-    int yCoordinateB = applyPadding(yCoordinateA + FONT_MD, 0);
+    float xCoordinateA = applyPadding(0, 1);
+    float xCoordinateB = applyPadding(230, 1);
+    float yCoordinateA = applyPadding(pricesTopPx + FONT_LG, 0);
+    float yCoordinateB = applyPadding(yCoordinateA + FONT_MD, 0);
 
     // Draw current price
     DrawTextEx(normalFont, "Current hour price:", (Vector2) { xCoordinateA, yCoordinateA}, FONT_MD, 2, BLACK);
@@ -105,11 +105,11 @@ void drawGuiDatePrices(ViewModel* viewModel) {
         .height = 300 
     };
     // Graph setup
-    int plottingOrigo = plottingRec.y + plottingRec.height;
-    int hourListXOffset = plottingRec.width / 24;
+    float plottingOrigo = plottingRec.y + plottingRec.height;
+    float hourListXOffset = plottingRec.width / 24;
 
     // Draw header
-    DrawTextEx(normalFont, TextFormat("%2d.%2d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD * 2 }, FONT_MD, 2, BLACK);
+    DrawTextEx(normalFont, TextFormat("%2d.%d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD * 2 }, FONT_MD, 2, BLACK);
     // Draw bgr rectangle
     DrawRectangleRec(plottingRec, Fade(GREEN, 0.5f));
 
@@ -121,12 +121,12 @@ void drawGuiDatePrices(ViewModel* viewModel) {
     int average_count = 0;
     while (dataIter >= 0) {
         // gmtime comparisons dont work in if statement so they are extracted here...i am confused...
-        int DD = gmtime(&viewModel->priceArr[dataIter].utcTime)->tm_mday;
-        int MM = gmtime(&viewModel->priceArr[dataIter].utcTime)->tm_mon;
-        int YYYY = gmtime(&viewModel->priceArr[dataIter].utcTime)->tm_year;
-        int cDD = gmtime(&t)->tm_mday;
-        int cMM = gmtime(&t)->tm_mon;
-        int cYYYY = gmtime(&t)->tm_year;
+        int DD = localtime(&viewModel->priceArr[dataIter].utcTime)->tm_mday;
+        int MM = localtime(&viewModel->priceArr[dataIter].utcTime)->tm_mon;
+        int YYYY = localtime(&viewModel->priceArr[dataIter].utcTime)->tm_year;
+        int cDD = localtime(&t)->tm_mday;
+        int cMM = localtime(&t)->tm_mon;
+        int cYYYY = localtime(&t)->tm_year;
 
         // Find current day prices
         if (DD == cDD && MM == cMM && YYYY == cYYYY) {
@@ -137,10 +137,10 @@ void drawGuiDatePrices(ViewModel* viewModel) {
             DrawTextEx(smallFont, TextFormat("%02d", localtime(&viewModel->priceArr[dataIter].utcTime)->tm_hour), (Vector2) { hourListXOffset* plottingIter + PADDING, plottingOrigo }, FONT_SM, .75f, BLACK);
             // Draw bar
             Rectangle barRec = {
-                .x = hourListXOffset * plottingIter + PADDING,
-                .y = plottingOrigo - clampedPrice,
-                .width = 10,
-                .height = clampedPrice
+                .x = (float)hourListXOffset * plottingIter + PADDING,
+                .y = (float)plottingOrigo - clampedPrice,
+                .width = 10.0f,
+                .height = (float)clampedPrice
             };
             DrawRectangleRec(barRec, BLUE);
             // Draw price
@@ -163,11 +163,11 @@ void drawLoadingGui(void) {
 }
 
 void drawGuiVersion(const char* version) {
-    int xPosition = applyPadding(SCREEN_WIDTH - 100, -1);
-    int yPosition = applyPadding(SCREEN_HEIGHT - FONT_SM, -1);
+    float xPosition = applyPadding(SCREEN_WIDTH - 100, -1);
+    float yPosition = applyPadding(SCREEN_HEIGHT - FONT_SM, -1);
     DrawTextEx(normalFont, version, (Vector2) { xPosition, yPosition }, FONT_MD, 2, GRAY);
 }
 
-int applyPadding(int coordinate, int direction) {
-    return coordinate + (PADDING * direction);
+float applyPadding(int coordinate, int direction) {
+    return (float)(coordinate + (PADDING * direction));
 }

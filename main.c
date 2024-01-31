@@ -15,7 +15,7 @@
 // #### Application run/compile settings
 #define APP_DEV false                                   /* Speeds up time */
 #define APP_ENABLE_CACHE true                           /* Enable or disable cache */
-#define DISABLE_WIN_CONSOLE true                        /* Disable console on windows */
+#define DISABLE_WIN_CONSOLE false                        /* Disable console on windows */
 
 // #### program constants
 #define APPLICATION_NAME  "Market electricity watcher"  /* Program title */
@@ -55,6 +55,7 @@ int main(void) {
 #if APP_ENABLE_CACHE == true
     int validCache = readCache(&viewModel);
     if (validCache == 0) {
+        // Use cached data
         printf("\nStart with cached values!\n\n");
         setViewModelHourIndexes(&viewModel);
     }
@@ -130,5 +131,3 @@ void setViewModelUpdate(ViewModel* viewModel) {
 #endif
     viewModel->nextDataUpdateStamp = t + HOUR * 12;
 }
-
-
