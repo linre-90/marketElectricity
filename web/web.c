@@ -16,10 +16,10 @@ struct MemoryStruct {
 static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
 /* Converts json string to struct Price array. */
-void parseJsonResponse(const char* res, struct Price* priceArr);
+void parseJsonResponse(const char* res, struct Price* const out_PriceArr);
 
 
-void fetchData(struct Price* priceArr) {
+void fetchData(struct Price* const out_PriceArr) {
 	// Init curl
 	curl_global_init(CURL_GLOBAL_ALL);
 	CURL* curl = curl_easy_init();
@@ -51,7 +51,7 @@ void fetchData(struct Price* priceArr) {
 		}
 		else {
 			// Succesfully retrieved data
-			parseJsonResponse(chunk.memory, priceArr);
+			parseJsonResponse(chunk.memory, out_PriceArr);
 		}
 		// free mem and clean up curl.
 		free(chunk.memory);
@@ -61,11 +61,10 @@ void fetchData(struct Price* priceArr) {
 }
 
 
-void parseJsonResponse(const char* res, struct Price* priceArr) {
+void parseJsonResponse(const char* res, struct Price* const out_priceArr) {
 	// Skip the opening { and jump right in [ character
 	int iterator = 10;
 	int priceObjIterator = 0;
-
 	// Loop over the whole res after skipping
 	while (res[iterator] != 0) {
 		// start parsing object when ever '{' character is found.
@@ -94,7 +93,7 @@ void parseJsonResponse(const char* res, struct Price* priceArr) {
 			}
 
 			// Set price to struct convert cents to eur
-			priceArr[priceObjIterator].price = (float)atof(priceStr);
+			out_priceArr[priceObjIterator].price = (float)atof(priceStr);
 
 			// Move forward to 's' ([s]tartDate) character and parse date
 			while (res[iterator] != 's' && res[iterator] != 0) { iterator++; }
@@ -137,7 +136,7 @@ void parseJsonResponse(const char* res, struct Price* priceArr) {
 
 			// Make time and add it to price
 			time_t utc = mktime(&m_time);
-			priceArr[priceObjIterator].utcTime = utc;
+			out_priceArr[priceObjIterator].utcTime = utc;
 			
 
 			// Object parsing is finished not interested in the rest of the object properties

@@ -13,6 +13,6 @@ struct Price {
 };
 
 /* Fetch latest data blop that contains 48 hours of data.*/
-void fetchData(struct Price* priceArr);
+void fetchData(struct Price* const out_PriceArr);
 
 #endif // !WEB_H

@@ -6,12 +6,12 @@
 /* Write viewmodel next update and price array to cache file on disk. 
 Returns 0 if operation is succesfull, other values indicate error.
 */
-int writeCache(ViewModel* viewModel);
+int writeCache(const ViewModel* const viewModel);
 
 
 /* Read view model items from cache file. Validates next update stamp and returns either -1 if old.
 Returns 0 if operations is successfull, other values indicate error. 
 */
-int readCache(ViewModel* out_viewModel);
+int readCache(ViewModel* const out_viewModel);
 
 #endif

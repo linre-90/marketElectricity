@@ -37,7 +37,7 @@ bool detectWindowShouldClose() {
     return WindowShouldClose();
 }
 
-void drawGui(ViewModel* viewModel, const char* version, bool isLoading) {
+void drawGui(const ViewModel* viewModel, const char* version, bool isLoading) {
     BeginDrawing();
     drawGuiBackground();
     
@@ -69,7 +69,7 @@ void drawGuiTime() {
     DrawTextEx(normalFont, TextFormat("Local:   %s", asctime(localtime(&t))), (Vector2) { xCoordinateA, yCoordinateB}, FONT_MD, 2, BLACK);
 }
 
-void drawGuiPrices(ViewModel* viewModel) {
+void drawGuiPrices(const ViewModel* viewModel) {
     // This is where "price box" begins from window top
     int pricesTopPx = 50;
     
@@ -78,7 +78,6 @@ void drawGuiPrices(ViewModel* viewModel) {
     float xCoordinateB = applyPadding(230, 1);
     float yCoordinateA = applyPadding(pricesTopPx + FONT_LG, 0);
     float yCoordinateB = applyPadding(yCoordinateA + FONT_MD, 0);
-
     // Draw current price
     DrawTextEx(normalFont, "Current hour price:", (Vector2) { xCoordinateA, yCoordinateA}, FONT_MD, 2, BLACK);
     DrawTextEx(normalFont, TextFormat("%.2f cents/KWh", viewModel->priceArr[viewModel->currHourIndex].price), (Vector2) { xCoordinateB, yCoordinateA}, FONT_MD, 2, BLACK);
@@ -95,7 +94,7 @@ void drawGuiPrices(ViewModel* viewModel) {
     }
 }
 
-void drawGuiDatePrices(ViewModel* viewModel) {
+void drawGuiDatePrices(const ViewModel* viewModel) {
     time_t t = time(NULL);
     // Graph rect area
     Rectangle plottingRec = { 

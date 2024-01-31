@@ -15,7 +15,7 @@ const uint32_t MAGIC_NUMBER = 69420;		// Magic number to identify file
 
 /* ############# Implementation ############ */
 
-int writeCache(ViewModel* viewModel) {
+int writeCache(const ViewModel* const viewModel) {
 	FILE* file = fopen(CACHE_FILE, "wb");
 	if (file == NULL) {
 		printf("\nFile null pointer in: writeCache()\n");
@@ -31,7 +31,7 @@ int writeCache(ViewModel* viewModel) {
 	if (magicNumSize != 1 || nextUpdateSize != 1 || priceArrSize != 1) {
 		fclose(file);
 		printf("\nError writing data: writeCache()\n");
-		return 0;
+		return -1;
 	}
 
 #if DEBUG_PRINTS == 1
@@ -42,7 +42,7 @@ int writeCache(ViewModel* viewModel) {
 	return 0;
 }
 
-int readCache(ViewModel* out_viewModel) {
+int readCache(ViewModel* const out_viewModel) {
 	FILE* file = fopen(CACHE_FILE, "rb");
 	if (file == NULL) {
 		printf("\nFile null pointer in: readCache()\n");
