@@ -19,7 +19,7 @@ float applyPadding(int coordinate, int direction);
 
 /* ############# Implementations ############# */
 
-void initGui(const char* applicationName) {
+void initGui(const char* const applicationName) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, applicationName);
     normalFont = LoadFontEx("resources/normal_font.ttf", 20, 0, 250);
     smallFont = LoadFontEx("resources/normal_font.ttf", 14, 0, 250);
@@ -37,7 +37,7 @@ bool detectWindowShouldClose() {
     return WindowShouldClose();
 }
 
-void drawGui(const ViewModel* viewModel, const char* version, bool isLoading) {
+void drawGui(const ViewModel* const viewModel, const char* const version, bool isLoading) {
     BeginDrawing();
     drawGuiBackground();
     
@@ -69,7 +69,7 @@ void drawGuiTime() {
     DrawTextEx(normalFont, TextFormat("Local:   %s", asctime(localtime(&t))), (Vector2) { xCoordinateA, yCoordinateB}, FONT_MD, 2, BLACK);
 }
 
-void drawGuiPrices(const ViewModel* viewModel) {
+void drawGuiPrices(const ViewModel* const viewModel) {
     // This is where "price box" begins from window top
     int pricesTopPx = 50;
     
@@ -94,7 +94,7 @@ void drawGuiPrices(const ViewModel* viewModel) {
     }
 }
 
-void drawGuiDatePrices(const ViewModel* viewModel) {
+void drawGuiDatePrices(const ViewModel* const viewModel) {
     time_t t = time(NULL);
     // Graph rect area
     Rectangle plottingRec = { 
@@ -161,7 +161,7 @@ void drawLoadingGui(void) {
     DrawTextEx(normalFont, "... Loading ...", (Vector2) { SCREEN_WIDTH / 2 - 75 , SCREEN_HEIGHT / 2 - FONT_MD}, FONT_MD, 2, BLACK);
 }
 
-void drawGuiVersion(const char* version) {
+void drawGuiVersion(const char* const version) {
     float xPosition = applyPadding(SCREEN_WIDTH - 100, -1);
     float yPosition = applyPadding(SCREEN_HEIGHT - FONT_SM, -1);
     DrawTextEx(normalFont, version, (Vector2) { xPosition, yPosition }, FONT_MD, 2, GRAY);
