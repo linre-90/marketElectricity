@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <time.h>
+
 #include "m_cache.h"
 #include "viewModel.h"
 #include "web.h"
-
+#include "logger.h"
 
 /* ############# Typedef & constants ############ */
 #define DEBUG_PRINTS 0						// Print debug messages
@@ -17,8 +18,9 @@ const uint32_t MAGIC_NUMBER = 69420;		// Magic number to identify file
 
 int writeCache(const ViewModel* const viewModel) {
 	FILE* file = fopen(CACHE_FILE, "wb");
+
 	if (file == NULL) {
-		printf("\nFile null pointer in: writeCache()\n");
+		log(L_ERR_CF, L_FILE_ERR, "File null pointer in: writeCache()");
 		return -1;
 	}
 	// Write magic number to file
@@ -30,7 +32,7 @@ int writeCache(const ViewModel* const viewModel) {
 
 	if (magicNumSize != 1 || nextUpdateSize != 1 || priceArrSize != 1) {
 		fclose(file);
-		printf("\nError writing data: writeCache()\n");
+		log(L_ERR_CF, L_FILE_ERR, "Error writing data: writeCache()");
 		return -1;
 	}
 
@@ -45,7 +47,7 @@ int writeCache(const ViewModel* const viewModel) {
 int readCache(ViewModel* const out_viewModel) {
 	FILE* file = fopen(CACHE_FILE, "rb");
 	if (file == NULL) {
-		printf("\nFile null pointer in: readCache()\n");
+		log(L_ERR_CF, L_FILE_ERR, "File null pointer in: readCache()");
 		return -1;
 	}
 
@@ -53,7 +55,7 @@ int readCache(ViewModel* const out_viewModel) {
 	uint32_t magicNum = 0;
 	fread(&magicNum, sizeof(uint32_t), 1, file);
 	if (magicNum != MAGIC_NUMBER) {
-		printf("\nInvalid magic number in: readCache(). Received: %d instead of %d.\n", magicNum, MAGIC_NUMBER);
+		log(L_ERR_CF, L_FILE_ERR, "Invalid magic number in: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -62,7 +64,7 @@ int readCache(ViewModel* const out_viewModel) {
 	time_t nextUpdateStamp = 0;
 	fread(&nextUpdateStamp, sizeof(time_t), 1, file);
 	if (nextUpdateStamp != 0 && nextUpdateStamp - time(NULL) <= 0) {
-		printf("\nCache data is too old in: readCache().\n");
+		log(L_ERR_CF, L_FILE_ERR, "Cache data is too old in: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -71,7 +73,7 @@ int readCache(ViewModel* const out_viewModel) {
 	// Read price arr to view model
 	size_t readPricesBytes = fread(&out_viewModel->priceArr[0], sizeof(out_viewModel->priceArr[0]) * NUM_OF_API_RESULTS, 1, file);
 	if (readPricesBytes != 1) {
-		printf("\nCannot read all price data: readCache().\n");
+		log(L_ERR_CF, L_FILE_ERR, "Cannot read all price data: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -87,4 +89,21 @@ int readCache(ViewModel* const out_viewModel) {
 
 	fclose(file);
 	return 0;
+}
+
+
+void cleanCache(void) {
+	// Check if the cache file exists
+	FILE* filePtr = fopen(CACHE_FILE, "r");
+	if (filePtr == NULL) {
+		log(L_MSG_CF, L_NONE_ERR, "No cache to clean: cleanCache()");
+		return;
+	}
+
+	// File exists delete it.
+	fclose(filePtr);
+	int success = remove(CACHE_FILE);
+	if (success != 0) {
+		log(L_ERR_CF, L_FILE_ERR, "Cannot remove cache file: cleanCache().");
+	}
 }

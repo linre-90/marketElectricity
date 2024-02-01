@@ -19,6 +19,7 @@ add_subdirectory(gui)
 add_subdirectory(web)
 add_subdirectory(m_cache)
 add_subdirectory(viewmodel)
+add_subdirectory(logger)
 
 # Copu stuff from src to bin folder this could be better...
 file(COPY gui/resources DESTINATION ${CMAKE_BINARY_DIR})
@@ -29,4 +30,4 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 # Link libraries
-target_link_libraries(marketElectricity PRIVATE viewmodel m_utils gui web m_cache)
+target_link_libraries(marketElectricity PRIVATE logger viewmodel m_utils gui web m_cache)

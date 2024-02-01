@@ -4,13 +4,21 @@
 #include <string.h>
 #include <stdbool.h>
 #include <curl/curl.h>
+
 #include "web.h"
+#include "logger.h"
 
 /* Memory for holding curl response. */
 struct MemoryStruct {
 	char* memory;
 	size_t size;
 };
+
+/* Request time out const */
+const long REQUEST_TIMEOUT_SECONDS = 5L;
+
+/* Amount of attemps before failing const */
+const int REQUEST_FAIL_TOLERANCE = 5;
 
 /* Callback to write json response in MemoryStruct, resizes dynamically. */
 static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp);
@@ -19,45 +27,70 @@ static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, voi
 void parseJsonResponse(const char* res, struct Price* const out_PriceArr);
 
 
-void fetchData(struct Price* const out_PriceArr) {
+bool fetchData(struct Price* const out_PriceArr) {
 	// Init curl
 	curl_global_init(CURL_GLOBAL_ALL);
 	CURL* curl = curl_easy_init();
 	CURLcode res;
+	int requestFailTolerance = REQUEST_FAIL_TOLERANCE;
+
 	// If curl pointer is not null
 	if (curl) {
-		// reserve memory chunk
-		struct MemoryStruct chunk;
-		chunk.memory = malloc(1); // Resized in WriteMemoryCallback
-		chunk.size = 0; // nothing is stored
+		// While exits if failtolerance goes below or to 0
+		while (true)
+		{
+			// reserve memory chunk
+			struct MemoryStruct chunk;
+			chunk.memory = malloc(1); // Resized in WriteMemoryCallback
+			chunk.size = 0; // nothing is stored
 
-		if (chunk.memory == NULL) {
-			printf("Cannot allocate memory for chunk.memory.\n");
-			curl_global_cleanup();
-			return;
-		}
+			if (chunk.memory == NULL) {
+				log(L_ERR_CF, L_MEMORY_ERR, "Cannot allocate memory for chunk.memory in fetchData().");
+				curl_global_cleanup();
+				return false;
+			}
 
-		// Prepare request url
-		curl_easy_setopt(curl, CURLOPT_URL, "https://api.porssisahko.net/v1/latest-prices.json");
-		// response data is sent to WriteMemoryCallback function
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
-		// chunk struct is passed to WriteMemoryCallback
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&chunk);
-		// Perform request
-		res = curl_easy_perform(curl);
-		// Result code is not 200
-		if (res != CURLE_OK) {
-			fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+			// Prepare request url
+			curl_easy_setopt(curl, CURLOPT_URL, "https://api.porssisahko.net/v1/latest-prices.json");
+			// response data is sent to WriteMemoryCallback function
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+			// chunk struct is passed to WriteMemoryCallback
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&chunk);
+			// set retuest timeout
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, REQUEST_TIMEOUT_SECONDS);
+			// Perform request
+			res = curl_easy_perform(curl);
+
+			// Curl request was not succesfull
+			if (res != CURLE_OK) {
+				fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+				// Use request tolerance
+				requestFailTolerance--;
+
+				// Clean up memory 
+				free(chunk.memory);
+
+				// We cannot get data even after numerous retryes return with error
+				if (requestFailTolerance <= 0) {
+					// Clean up curl
+					curl_easy_cleanup(curl);
+					curl_global_cleanup();
+					return false;
+				}
+			}
+			else {
+				// Succesfully retrieved data
+				parseJsonResponse(chunk.memory, out_PriceArr);
+
+				// free mem and clean up curl.
+				free(chunk.memory);
+				curl_easy_cleanup(curl);
+				curl_global_cleanup();
+				return true;
+			}
 		}
-		else {
-			// Succesfully retrieved data
-			parseJsonResponse(chunk.memory, out_PriceArr);
-		}
-		// free mem and clean up curl.
-		free(chunk.memory);
-		curl_easy_cleanup(curl);
-		curl_global_cleanup();
 	}
+	return false;
 }
 
 
@@ -154,12 +187,11 @@ static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, voi
 	size_t realsize = size * nmemb;
 	// Cast userp to correct type
 	struct MemoryStruct* mem = (struct MemoryStruct*)userp;
-
 	// Realloc data + realsize + 1
 	char* ptr = realloc(mem->memory, mem->size + realsize + 1);
 	if (!ptr) {
 		/* out of memory! */
-		printf("Not enough memory (realloc returned NULL)\n");
+		log(L_ERR_CF, L_MEMORY_ERR, "Not enough memory (realloc returned NULL). In WriteMemoryCallback()");
 		return 0;
 	}
 	// Update ptr to memory to reallocated address

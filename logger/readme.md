@@ -1,0 +1,1 @@
+Logging library for marketElectricity application. Logs to console and/or file depending of log level.

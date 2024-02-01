@@ -2,6 +2,7 @@
 #define WEB_H
 
 #include <time.h>
+#include <stdbool.h>
 
 /* How many results api returs on fetchData() */
 static const int NUM_OF_API_RESULTS = 48;
@@ -12,7 +13,7 @@ struct Price {
 	time_t utcTime;
 };
 
-/* Fetch latest data blop that contains 48 hours of data.*/
-void fetchData(struct Price* const out_PriceArr);
+/* Fetch latest data blop that contains 48 hours of data. Returns true if request is made succesfully otherwise false.*/
+bool fetchData(struct Price* const out_PriceArr);
 
 #endif // !WEB_H

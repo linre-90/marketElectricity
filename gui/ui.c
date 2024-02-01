@@ -1,4 +1,5 @@
 #include <stdbool.h>
+
 #include "raylib.h"
 #include "ui.h"
 #include "styles.h"
@@ -14,8 +15,30 @@ Font smallFont;
 
 /* ############### forward dec ############### */
 
+/* Draws time related gui box */
+void drawGuiTime();
+
+/* Draws current and next hour price related gui box. */
+void drawGuiPrices(const ViewModel* const viewModel);
+
+/* Draws gui todays price graph box. */
+void drawGuiDatePrices(const ViewModel* const viewModel);
+
+/* Draws gui version stamp box. */
+void drawGuiVersion(const char* const version);
+
+/* Draws gui background. */
+void drawGuiBackground(void);
+
+/* Draws loading screen background. */
+void drawLoadingGui(void);
+
+/* Draws error screen. */
+void drawErrorGui(void);
+
 /* Applies default padding to coordinates in direction indicated by direction.*/
 float applyPadding(int coordinate, int direction);
+
 
 /* ############# Implementations ############# */
 
@@ -37,9 +60,15 @@ bool detectWindowShouldClose() {
     return WindowShouldClose();
 }
 
-void drawGui(const ViewModel* const viewModel, const char* const version, bool isLoading) {
+void drawGui(const ViewModel* const viewModel, const char* const version, bool isLoading, bool isError) {
     BeginDrawing();
     drawGuiBackground();
+
+    if (isError) {
+        drawErrorGui();
+        EndDrawing();
+        return;
+    }
     
     if (isLoading) {
         drawLoadingGui();
@@ -108,7 +137,7 @@ void drawGuiDatePrices(const ViewModel* const viewModel) {
     float hourListXOffset = plottingRec.width / 24;
 
     // Draw header
-    DrawTextEx(normalFont, TextFormat("%2d.%d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD * 2 }, FONT_MD, 2, BLACK);
+    DrawTextEx(normalFont, TextFormat("%d.%d prices cents/KWh", gmtime(&t)->tm_mday, gmtime(&t)->tm_mon + 1), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD * 2 }, FONT_MD, 2, BLACK);
     // Draw bgr rectangle
     DrawRectangleRec(plottingRec, Fade(GREEN, 0.5f));
 
@@ -156,7 +185,6 @@ void drawGuiDatePrices(const ViewModel* const viewModel) {
     DrawTextEx(smallFont, TextFormat("Graph average: %.2f cents/KWh", average_sum / average_count), (Vector2) { applyPadding(0, 1), plottingRec.y - FONT_MD }, FONT_SM, 2, BLACK);
 }
 
-
 void drawLoadingGui(void) {
     DrawTextEx(normalFont, "... Loading ...", (Vector2) { SCREEN_WIDTH / 2 - 75 , SCREEN_HEIGHT / 2 - FONT_MD}, FONT_MD, 2, BLACK);
 }
@@ -165,6 +193,13 @@ void drawGuiVersion(const char* const version) {
     float xPosition = applyPadding(SCREEN_WIDTH - 100, -1);
     float yPosition = applyPadding(SCREEN_HEIGHT - FONT_SM, -1);
     DrawTextEx(normalFont, version, (Vector2) { xPosition, yPosition }, FONT_MD, 2, GRAY);
+}
+
+void drawErrorGui(void) {
+    DrawTextEx(normalFont, "Application encountered error!", (Vector2) { applyPadding(0, 1), applyPadding(0, 1)}, FONT_MD, 2, RED);
+    DrawTextEx(normalFont, "Try restarting, if the problem persists check the log file.", (Vector2) { applyPadding(0, 1), applyPadding(0, 1) + FONT_MD * 2 }, FONT_MD, 2, RED);
+    DrawTextEx(normalFont, "Log file is available at the executable folder.", (Vector2) { applyPadding(0, 1), applyPadding(0, 1) + FONT_MD * 3 }, FONT_MD, 2, RED);
+
 }
 
 float applyPadding(int coordinate, int direction) {

@@ -1,0 +1,1 @@
+Random set of functions that don't really belong to any other library.

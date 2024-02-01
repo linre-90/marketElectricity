@@ -14,4 +14,8 @@ Returns 0 if operations is successfull, other values indicate error.
 */
 int readCache(ViewModel* const out_viewModel);
 
+/* Removes cached data. */
+void cleanCache(void);
+
+
 #endif

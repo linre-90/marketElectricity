@@ -1,0 +1,1 @@
+Gui library for the marketElectricity application.

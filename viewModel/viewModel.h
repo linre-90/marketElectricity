@@ -1,5 +1,6 @@
 #ifndef APP_VIEW_MODEL
 #define APP_VIEW_MODEL
+
 #include <time.h>
 
 /* View model contains all the relevant data that app libraries need to talk each other. */
