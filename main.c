@@ -58,7 +58,7 @@ int main(void) {
     ViewModel viewModel = { 0 };
     viewModel.priceArr = (struct Price*)malloc(sizeof(struct Price) * NUM_OF_API_RESULTS);
     if (viewModel.priceArr == NULL) {
-        log(L_ERR_CF, L_MEMORY_ERR, NULL);
+        Llog(L_ERR_CF, L_MEMORY_ERR, NULL);
         exit(1);
     }
     bool dataUpdateSucceeded = true;
@@ -68,17 +68,17 @@ int main(void) {
     int validCache = readCache(&viewModel);
     if (validCache == 0) {
         // Use cached data
-        log(L_MSG_CF, L_NONE_ERR, "Start with cached values");
+        Llog(L_MSG_CF, L_NONE_ERR, "Start with cached values");
         dataUpdateSucceeded = setViewModelHourIndexes(&viewModel);
     }
     else {
         // Start program with full viewmodel and data reset.
-        log(L_MSG_CF, L_NONE_ERR, "Start with full reset values");
+        Llog(L_MSG_CF, L_NONE_ERR, "Start with full reset values");
         dataUpdateSucceeded = updateViewModel(&viewModel);
     }
 #endif
 #if APP_ENABLE_CACHE == false
-    log(L_MSG_CF, L_NONE_ERR, "Start with full reset values! Cache is disabled.");
+    Llog(L_MSG_CF, L_NONE_ERR, "Start with full reset values! Cache is disabled.");
     dataUpdateSucceeded = updateViewModel(&viewModel);
 #endif
 
@@ -119,13 +119,13 @@ bool updateViewModel(ViewModel* const viewModel) {
     bool callSuccess = false;
     callSuccess = fetchData(viewModel->priceArr);
     if (!callSuccess) { 
-        log(L_ERR_CF, L_FETCH_ERR, "Fetch data error on: updateViewModel()");
+        Llog(L_ERR_CF, L_FETCH_ERR, "Fetch data error on: updateViewModel()");
         return false; 
     }
 
     callSuccess = setViewModelHourIndexes(viewModel);
     if (!callSuccess) { 
-        log(L_ERR_CF, L_UPDATE_ERR, "Hour index set error on: updateViewModel()");
+        Llog(L_ERR_CF, L_UPDATE_ERR, "Hour index set error on: updateViewModel()");
         return false; 
     }
 
@@ -137,7 +137,7 @@ bool updateViewModel(ViewModel* const viewModel) {
 #if APP_ENABLE_CACHE == true
     int cacheWriteOK = writeCache(viewModel);
     if (cacheWriteOK != 0) {
-        log(L_ERR_CF, L_CACHE_ERR, "Cache write error on: updateViewModel()");
+        Llog(L_ERR_CF, L_CACHE_ERR, "Cache write error on: updateViewModel()");
         return false;
     }
     else {
@@ -164,7 +164,7 @@ bool setViewModelHourIndexes(ViewModel* const viewModel) {
             return true;
         }
     }
-    log(L_ERR_CF, L_UPDATE_ERR, "Error finding current index from ViewModel data. Current hour does not exists. On setViewModelHourIndexes().");
+    Llog(L_ERR_CF, L_UPDATE_ERR, "Error finding current index from ViewModel data. Current hour does not exists. On setViewModelHourIndexes().");
     return false;
 }
 
@@ -179,7 +179,7 @@ void setViewModelUpdate(ViewModel* const viewModel) {
 
 void logProgramStartUp() {
     // Log seperator to file to keep formatting readable.
-    log(L_MSG_CF, L_NONE_ERR, "--------------------------");
+    Llog(L_MSG_CF, L_NONE_ERR, "--------------------------");
 
     // init char buffer and time
     char startUpStrsBuffer[100] = { 0 };
@@ -192,25 +192,25 @@ void logProgramStartUp() {
         timeStampStr[strlen(timeStampStr - 1)] = '\0';
     }
     sprintf(startUpStrsBuffer, "Program startup (UTC)=%s", timeStampStr);
-    log(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
+    Llog(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
 
     // Log version
     memset(startUpStrsBuffer, 0, 100);
     sprintf(startUpStrsBuffer, "Version=%s", VERSION);
-    log(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
+    Llog(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
 
     // Log APP_DEV value
     memset(startUpStrsBuffer, 0, 100);
     sprintf(startUpStrsBuffer, "APP_DEV=%s", APP_DEV == true ? "true" : "false");
-    log(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
+    Llog(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
 
     // Log APP_ENABLE_CACHE value
     memset(startUpStrsBuffer, 0, 100);
     sprintf(startUpStrsBuffer, "APP_ENABLE_CACHE=%s", APP_ENABLE_CACHE == true ? "true" : "false");
-    log(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
+    Llog(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
 
     // Log DISABLE_WIN_CONSOLE value
     memset(startUpStrsBuffer, 0, 100);
     sprintf(startUpStrsBuffer, "DISABLE_WIN_CONSOLE=%s", DISABLE_WIN_CONSOLE == true ? "true" : "false");
-    log(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
+    Llog(L_MSG_CF, L_NONE_ERR, startUpStrsBuffer);
 }

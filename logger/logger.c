@@ -41,7 +41,7 @@ void log_f_msg(const char* const msg);
 
 // ########## Implementations ############
 
-void log(L_LOG_LEVEL logLevel, L_ERROR_CODE errCode, const char* const msg){
+void Llog(L_LOG_LEVEL logLevel, L_ERROR_CODE errCode, const char* const msg){
 	switch (logLevel)
 	{
 	case L_ERR_CF:

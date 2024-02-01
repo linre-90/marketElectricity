@@ -34,6 +34,6 @@ typedef enum {
 
 
 /* Log messages to file or console. */
-void log(L_LOG_LEVEL logLevel, L_ERROR_CODE errCode, const char* const msg);
+void Llog(L_LOG_LEVEL logLevel, L_ERROR_CODE errCode, const char* const msg);
 
 #endif

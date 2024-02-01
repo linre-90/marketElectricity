@@ -45,7 +45,7 @@ bool fetchData(struct Price* const out_PriceArr) {
 			chunk.size = 0; // nothing is stored
 
 			if (chunk.memory == NULL) {
-				log(L_ERR_CF, L_MEMORY_ERR, "Cannot allocate memory for chunk.memory in fetchData().");
+				Llog(L_ERR_CF, L_MEMORY_ERR, "Cannot allocate memory for chunk.memory in fetchData().");
 				curl_global_cleanup();
 				return false;
 			}
@@ -191,7 +191,7 @@ static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, voi
 	char* ptr = realloc(mem->memory, mem->size + realsize + 1);
 	if (!ptr) {
 		/* out of memory! */
-		log(L_ERR_CF, L_MEMORY_ERR, "Not enough memory (realloc returned NULL). In WriteMemoryCallback()");
+		Llog(L_ERR_CF, L_MEMORY_ERR, "Not enough memory (realloc returned NULL). In WriteMemoryCallback()");
 		return 0;
 	}
 	// Update ptr to memory to reallocated address

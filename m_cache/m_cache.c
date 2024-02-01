@@ -20,7 +20,7 @@ int writeCache(const ViewModel* const viewModel) {
 	FILE* file = fopen(CACHE_FILE, "wb");
 
 	if (file == NULL) {
-		log(L_ERR_CF, L_FILE_ERR, "File null pointer in: writeCache()");
+		Llog(L_ERR_CF, L_FILE_ERR, "File null pointer in: writeCache()");
 		return -1;
 	}
 	// Write magic number to file
@@ -32,7 +32,7 @@ int writeCache(const ViewModel* const viewModel) {
 
 	if (magicNumSize != 1 || nextUpdateSize != 1 || priceArrSize != 1) {
 		fclose(file);
-		log(L_ERR_CF, L_FILE_ERR, "Error writing data: writeCache()");
+		Llog(L_ERR_CF, L_FILE_ERR, "Error writing data: writeCache()");
 		return -1;
 	}
 
@@ -47,7 +47,7 @@ int writeCache(const ViewModel* const viewModel) {
 int readCache(ViewModel* const out_viewModel) {
 	FILE* file = fopen(CACHE_FILE, "rb");
 	if (file == NULL) {
-		log(L_ERR_CF, L_FILE_ERR, "File null pointer in: readCache()");
+		Llog(L_ERR_CF, L_FILE_ERR, "File null pointer in: readCache()");
 		return -1;
 	}
 
@@ -55,7 +55,7 @@ int readCache(ViewModel* const out_viewModel) {
 	uint32_t magicNum = 0;
 	fread(&magicNum, sizeof(uint32_t), 1, file);
 	if (magicNum != MAGIC_NUMBER) {
-		log(L_ERR_CF, L_FILE_ERR, "Invalid magic number in: readCache().");
+		Llog(L_ERR_CF, L_FILE_ERR, "Invalid magic number in: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -64,7 +64,7 @@ int readCache(ViewModel* const out_viewModel) {
 	time_t nextUpdateStamp = 0;
 	fread(&nextUpdateStamp, sizeof(time_t), 1, file);
 	if (nextUpdateStamp != 0 && nextUpdateStamp - time(NULL) <= 0) {
-		log(L_ERR_CF, L_FILE_ERR, "Cache data is too old in: readCache().");
+		Llog(L_ERR_CF, L_FILE_ERR, "Cache data is too old in: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -73,7 +73,7 @@ int readCache(ViewModel* const out_viewModel) {
 	// Read price arr to view model
 	size_t readPricesBytes = fread(&out_viewModel->priceArr[0], sizeof(out_viewModel->priceArr[0]) * NUM_OF_API_RESULTS, 1, file);
 	if (readPricesBytes != 1) {
-		log(L_ERR_CF, L_FILE_ERR, "Cannot read all price data: readCache().");
+		Llog(L_ERR_CF, L_FILE_ERR, "Cannot read all price data: readCache().");
 		fclose(file);
 		return -1;
 	}
@@ -96,7 +96,7 @@ void cleanCache(void) {
 	// Check if the cache file exists
 	FILE* filePtr = fopen(CACHE_FILE, "r");
 	if (filePtr == NULL) {
-		log(L_MSG_CF, L_NONE_ERR, "No cache to clean: cleanCache()");
+		Llog(L_MSG_CF, L_NONE_ERR, "No cache to clean: cleanCache()");
 		return;
 	}
 
@@ -104,6 +104,6 @@ void cleanCache(void) {
 	fclose(filePtr);
 	int success = remove(CACHE_FILE);
 	if (success != 0) {
-		log(L_ERR_CF, L_FILE_ERR, "Cannot remove cache file: cleanCache().");
+		Llog(L_ERR_CF, L_FILE_ERR, "Cannot remove cache file: cleanCache().");
 	}
 }
