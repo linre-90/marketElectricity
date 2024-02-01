@@ -125,7 +125,7 @@ void parseJsonResponse(const char* res, struct Price* const out_priceArr) {
 				priceStrIterator++;
 			}
 
-			// Set price to struct convert cents to eur
+			// Set price, price comes already in cents.
 			out_priceArr[priceObjIterator].price = (float)atof(priceStr);
 
 			// Move forward to 's' ([s]tartDate) character and parse date
