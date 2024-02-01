@@ -13,4 +13,7 @@ ECHO:
 ECHO Deleting cache...
 DEL ".\release\windows\cache.mecache"
 ECHO:
+ECHO Deleting log...
+DEL ".\release\windows\me_logs.txt"
+ECHO:
 ECHO Succesfully copied all needed assets to ".\release\windows".
